@@ -576,8 +576,10 @@ def guard_template():
     return True
 
 def first_sub_path():
-    code, res = req("GET", "/api/users?limit=1")
-    if code == 401: login(); code, res = req("GET", "/api/users?limit=1")
+    # PasarGuard 5.6.0 only includes subscription_url when load_sub=true.
+    endpoint = "/api/users?limit=1&load_sub=true"
+    code, res = req("GET", endpoint)
+    if code == 401: login(); code, res = req("GET", endpoint)
     users = as_list(res, "users") if code == 200 else []
     url = (users[0].get("subscription_url") or "") if users and isinstance(users[0], dict) else ""
     if not url: return ""
